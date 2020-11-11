@@ -1,6 +1,4 @@
-﻿//test commit!
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -157,6 +155,7 @@ namespace C_4
             }
         }
 
+        //TODO: reload current problem even if already on compile screen <==============================================================================================================================
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
             if (backgroundWorker2_Progress(0, "LOADING COMPILER", e))
@@ -164,7 +163,7 @@ namespace C_4
                 return;
             }
 
-            Java javac = Java.GetJava(true); //loads the current java development version
+            Java javac = Java.SearchJava(Java.JavaFlags.Development, Java.JavaFlags.Development); //loads the current java development version
             if (javac.error != null) //if there's an error loading, display and abort
             {
                 MessageBox.Show(javac.error, "Error Locating Compiler!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -227,7 +226,7 @@ namespace C_4
                         return;
                     }
 
-                    Java java = Java.GetJava(false); //loads the current java runtime version
+                    Java java = Java.SearchJava(Java.JavaFlags.Default, Java.JavaFlags.Development); //loads the current java development version                                                                             //loads the current java runtime version
                     if (java.error != null) //if there's an error loading, display and abort
                     {
                         MessageBox.Show(java.error, "Error Locating Tester!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -776,7 +775,7 @@ dd {
             Invalidate();
         }
 
-        //Dictionary<Button, Problem> problems = new Dictionary<Button, Problem>();
+        //TODO: better load button <========================================================================================================================================================================================================================
         List<Problem> problems = new List<Problem>();
         List<Problem> results = new List<Problem>();
         private void LoadProblems()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.IO;
 
 namespace C_4
@@ -14,12 +15,22 @@ namespace C_4
         /// <summary>
         /// The name of development Java
         /// </summary>
-        public const string JDK = "Java Development Kit";
+        public const string JDK = "JDK";
+
+        /// <summary>
+        /// The name of legacy development Java
+        /// </summary>
+        public const string LJDK = "Java Development Kit";
 
         /// <summary>
         /// The name of runtime Java
         /// </summary>
-        public const string JRE = "Java Runtime Environment";
+        public const string JRE = "JRE";
+
+        /// <summary>
+        /// The name of legacy runtime Java
+        /// </summary>
+        public const string LJRE = "Java Runtime Environment";
 
         /// <summary>
         /// The name of the Java runtime executable
@@ -41,6 +52,16 @@ namespace C_4
         public bool development;
 
         /// <summary>
+        /// Whether this is a 32-bit installation
+        /// </summary>
+        public bool is32bit;
+
+        /// <summary>
+        /// Whether this is a legacy installation
+        /// </summary>
+        public bool legacy;
+
+        /// <summary>
         /// The type of error that was reached when searching for the installation
         /// </summary>
         public int errtype;
@@ -53,12 +74,12 @@ namespace C_4
         /// <summary>
         /// The version string of this installation
         /// </summary>
-        public string version; 
+        public string version;
 
         /// <summary>
         /// The JavaHome directory of this installation
         /// </summary>
-        public string home; 
+        public string home;
 
         /// <summary>
         /// The main executable of this installation
@@ -67,41 +88,98 @@ namespace C_4
 
         #endregion
 
+        #region Enum
+
+        /// <summary>
+        /// Specifies search options that are used for locating Java installations
+        /// </summary>
+        [Flags]
+        public enum JavaFlags
+        {
+            /// <summary>
+            /// Specifies that no search settings are defined
+            /// </summary>
+            Default = 0,
+
+            /// <summary>
+            /// Specifies to search for a Java Development Kit installation
+            /// </summary>
+            Development = 1 << 0,
+
+            /// <summary>
+            /// Specifies to search for a 32-bit Java installation
+            /// </summary>
+            Registry32 = 1 << 1,
+
+            /// <summary>
+            /// Specifies to search for a legacy Java installation
+            /// </summary>
+            Legacy = 1 << 2
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
-        /// Searches for the Java installation in both the 64-bit and 32-bit registries
+        /// Searches for any Java installation, preferring the specified search options
         /// </summary>
-        /// <param name="development">Whether to search for a Java Development Kit or a Java Runtime Environment</param>
-        /// <returns>Information about the current Java installation</returns>
-        public static Java GetJava(bool development)
+        /// <param name="flags">The search options to prefer when locate a Java installation</param>
+        /// <param name="locked">The search options specified in the flags which must be used when locating a Java installation</param>
+        /// <returns>Information about the current located installation</returns>
+        public static Java SearchJava(JavaFlags flags = JavaFlags.Default, JavaFlags locked = JavaFlags.Default)
         {
-            Java java64 = GetJava(development, RegistryView.Registry64); //try to find a Java installation in the 64-bit registry
-            if (java64.errtype > 0)
+            Java java = GetJava(flags); //try to find a Java installation with the default settings
+            int[] vals = (int[])Enum.GetValues(typeof(JavaFlags)); //enumerate the flag values
+            for(int i = 1; i < 1 << vals.Length; i++) //for every combination of flag values...
             {
-                Java java32 = GetJava(development, RegistryView.Registry32); //if there's an error, try the 32-bit registry
-                if (java32.errtype == 0 || java32.errtype > java64.errtype) //return whichever one got farther in the process
+                if(java.errtype == 0) //if an installation has already been found, break
                 {
-                    return java32;
+                    break;
+                }
+                JavaFlags flags2 = flags; //a modified set of search options
+                for(int j = 0; j < vals.Length; j++) //for every flag
+                {
+                    //if the flag is not locked and is part of the current combination, toggle it
+                    if(((int)locked & vals[j]) == 0 && (i & vals[j]) != 0)
+                    {
+                        flags2 ^= (JavaFlags)vals[j];
+                    }
+                }
+                Java java2 = GetJava(flags2); //try to find a Java installation with the modified sttings
+                if(java2.errtype == 0 || java2.errtype < java.errtype) //if the new search had better results, store it
+                {
+                    java = java2;
                 }
             }
-            return java64;
+            return java; //returns the located installation information
         }
 
         /// <summary>
-        /// Searches for the Java installation in the specified registry
+        /// Searches for the Java installation with the specified settings
         /// </summary>
-        /// <param name="development">Whether to search for a Java Development Kit or a Java Runtime Environment</param>
-        /// <returns>Information about the current Java installation in the specified registry</returns>
-        public static Java GetJava(bool development, RegistryView view)
+        /// <param name="flags">The search options to use to locate a Java installation</param>
+        /// <returns>Information about the located Java installation</returns>
+        public static Java GetJava(JavaFlags flags)
         {
-            string JTYPE = development ? JDK : JRE; //the type of Java installation
-            string BTYPE = development ? JAVAC : JAVA; //the name of the relevant Java executable
-            Java output = new Java() { development = development }; //the output information
+            string JTYPE = flags.HasFlag(JavaFlags.Development) ? JDK : JRE; //the type of Java installation
+            if (flags.HasFlag(JavaFlags.Legacy))
+            {
+                JTYPE = flags.HasFlag(JavaFlags.Development) ? LJDK : LJRE; //the legacy registry keys for Java installations
+            }
+            string BTYPE = flags.HasFlag(JavaFlags.Development) ? JAVAC : JAVA; //the name of the relevant Java executable
+            RegistryView VIEW = flags.HasFlag(JavaFlags.Registry32) ? RegistryView.Registry32 : RegistryView.Registry64; //the registry to search in
+
+            Java output = new Java()
+            {
+                development = flags.HasFlag(JavaFlags.Development),
+                is32bit = flags.HasFlag(JavaFlags.Registry32),
+                legacy = flags.HasFlag(JavaFlags.Legacy)
+            }; //the output Java installation information
 
             //check each property step-by-step, returning error information if the registry key can't be found
             //the output.error messages are sufficient as comments lol
-            RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
+            RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, VIEW);
             if (key == null)
             {
                 output.error = "Windows Registry is not available.";
@@ -159,7 +237,7 @@ namespace C_4
                 }
             }
 
-            return output;
+            return output; //returns the located installation information
         }
 
         #endregion
