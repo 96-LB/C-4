@@ -102,19 +102,19 @@ namespace C_4
             Default = 0,
 
             /// <summary>
-            /// Specifies to search for a Java Development Kit installation
-            /// </summary>
-            Development = 1 << 0,
-
-            /// <summary>
             /// Specifies to search for a 32-bit Java installation
             /// </summary>
-            Registry32 = 1 << 1,
+            Registry32 = 1 << 0,
 
             /// <summary>
             /// Specifies to search for a legacy Java installation
             /// </summary>
-            Legacy = 1 << 2
+            Legacy = 1 << 1,
+
+            /// <summary>
+            /// Specifies to search for a Java Development Kit installation
+            /// </summary>
+            Development = 1 << 2
         }
 
         #endregion
