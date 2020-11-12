@@ -13,24 +13,19 @@ namespace C_4
         #region Constants
 
         /// <summary>
-        /// The name of development Java
+        /// The name of the current Java Standard Environment
         /// </summary>
-        public const string JDK = "JDK";
+        public const string SE = "JDK";
 
         /// <summary>
         /// The name of legacy development Java
         /// </summary>
-        public const string LJDK = "Java Development Kit";
-
-        /// <summary>
-        /// The name of runtime Java
-        /// </summary>
-        public const string JRE = "JRE";
+        public const string JDK = "Java Development Kit";
 
         /// <summary>
         /// The name of legacy runtime Java
         /// </summary>
-        public const string LJRE = "Java Runtime Environment";
+        public const string JRE = "Java Runtime Environment";
 
         /// <summary>
         /// The name of the Java runtime executable
@@ -131,23 +126,23 @@ namespace C_4
         {
             Java java = GetJava(flags); //try to find a Java installation with the default settings
             int[] vals = (int[])Enum.GetValues(typeof(JavaFlags)); //enumerate the flag values
-            for(int i = 1; i < 1 << vals.Length; i++) //for every combination of flag values...
+            for (int i = 1; i < 1 << vals.Length; i++) //for every combination of flag values...
             {
-                if(java.errtype == 0) //if an installation has already been found, break
+                if (java.errtype == 0) //if an installation has already been found, break
                 {
                     break;
                 }
                 JavaFlags flags2 = flags; //a modified set of search options
-                for(int j = 0; j < vals.Length; j++) //for every flag
+                for (int j = 0; j < vals.Length; j++) //for every flag
                 {
                     //if the flag is not locked and is part of the current combination, toggle it
-                    if(((int)locked & vals[j]) == 0 && (i & vals[j]) != 0)
+                    if (((int)locked & vals[j]) == 0 && (i & vals[j]) != 0)
                     {
                         flags2 ^= (JavaFlags)vals[j];
                     }
                 }
                 Java java2 = GetJava(flags2); //try to find a Java installation with the modified sttings
-                if(java2.errtype == 0 || java2.errtype < java.errtype) //if the new search had better results, store it
+                if (java2.errtype == 0 || java2.errtype < java.errtype) //if the new search had better results, store it
                 {
                     java = java2;
                 }
@@ -162,11 +157,7 @@ namespace C_4
         /// <returns>Information about the located Java installation</returns>
         public static Java GetJava(JavaFlags flags)
         {
-            string JTYPE = flags.HasFlag(JavaFlags.Development) ? JDK : JRE; //the type of Java installation
-            if (flags.HasFlag(JavaFlags.Legacy))
-            {
-                JTYPE = flags.HasFlag(JavaFlags.Development) ? LJDK : LJRE; //the legacy registry keys for Java installations
-            }
+            string JTYPE = flags.HasFlag(JavaFlags.Legacy) ? flags.HasFlag(JavaFlags.Development) ? JDK : JRE : SE; //the type of Java installation
             string BTYPE = flags.HasFlag(JavaFlags.Development) ? JAVAC : JAVA; //the name of the relevant Java executable
             RegistryView VIEW = flags.HasFlag(JavaFlags.Registry32) ? RegistryView.Registry32 : RegistryView.Registry64; //the registry to search in
 
@@ -220,21 +211,45 @@ namespace C_4
                             }
                             else
                             {
-                                output.home = home.ToString();
-                                string exe = Path.Combine(output.home, "bin", BTYPE);
-                                if (!File.Exists(exe))
-                                {
-                                    output.error = $"Failed to locate {BTYPE} in {output.home}. Try re-installing {JTYPE} {output.version}.";
-                                    output.errtype = 6;
-                                }
-                                else
-                                {
-                                    output.exe = exe;
-                                }
+                                output = GetJava(home.ToString(), flags, output.version);
                             }
                         }
                     }
                 }
+            }
+
+            return output; //returns the located installation information
+        }
+
+        /// <summary>
+        /// Searches for a Java executable in the specified home folder
+        /// </summary>
+        /// <param name="home">The path in which to search for a Java executable</param>
+        /// <param name="flags">The search options to use to locate a Java installation</param>
+        /// <returns>Information about the located Java installation</returns>
+        public static Java GetJava(string home, JavaFlags flags, string version=null)
+        {
+            string JTYPE = flags.HasFlag(JavaFlags.Legacy) ? flags.HasFlag(JavaFlags.Development) ? JDK : JRE : SE; //the type of Java 
+            string BTYPE = flags.HasFlag(JavaFlags.Development) ? JAVAC : JAVA; //the name of the relevant Java executable
+
+            Java output = new Java()
+            {
+                development = flags.HasFlag(JavaFlags.Development),
+                is32bit = flags.HasFlag(JavaFlags.Registry32),
+                legacy = flags.HasFlag(JavaFlags.Legacy),
+                home = home,
+                version = version
+            }; //the output Java installation information
+
+            string exe = Path.Combine(output.home, "bin", BTYPE);
+            if (!File.Exists(exe))
+            {
+                output.error = $"Failed to locate {BTYPE} in {output.home}. Try re-installing {JTYPE} {output.version}.";
+                output.errtype = 6;
+            }
+            else
+            {
+                output.exe = exe;
             }
 
             return output; //returns the located installation information
