@@ -241,6 +241,7 @@ namespace C_4
                 version = version
             }; //the output Java installation information
 
+            //checks for the exe file in the path <home>/bin/
             string exe = Path.Combine(output.home, "bin", BTYPE);
             if (!File.Exists(exe))
             {
