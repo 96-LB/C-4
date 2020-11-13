@@ -29,7 +29,7 @@ namespace C_4
         /// </summary>
         /// <param name="key">The configuration setting to query</param>
         /// <returns>The value of the specified configuration setting, or null if it is unset</returns>
-        string this[string key] { get => settings.ContainsKey(key) ? settings[key] : null; }
+        public string this[string key] { get => settings.ContainsKey(key) ? settings[key] : null; }
 
         #endregion
 
