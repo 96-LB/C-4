@@ -158,7 +158,7 @@ namespace C_4
         public static Java GetJava(JavaFlags flags)
         {
             string JTYPE = flags.HasFlag(JavaFlags.Legacy) ? flags.HasFlag(JavaFlags.Development) ? JDK : JRE : SE; //the type of Java installation
-            string BTYPE = flags.HasFlag(JavaFlags.Development) ? JAVAC : JAVA; //the name of the relevant Java executable
+            string JNAME = flags.HasFlag(JavaFlags.Legacy) && !flags.HasFlag(JavaFlags.Development) ? JRE : JDK; //the name of the Java installation
             RegistryView VIEW = flags.HasFlag(JavaFlags.Registry32) ? RegistryView.Registry32 : RegistryView.Registry64; //the registry to search in
 
             Java output = new Java()
@@ -229,7 +229,7 @@ namespace C_4
         /// <returns>Information about the located Java installation</returns>
         public static Java GetJava(string home, JavaFlags flags, string version=null)
         {
-            string JTYPE = flags.HasFlag(JavaFlags.Legacy) ? flags.HasFlag(JavaFlags.Development) ? JDK : JRE : SE; //the type of Java 
+            string JNAME = flags.HasFlag(JavaFlags.Legacy) && !flags.HasFlag(JavaFlags.Development) ? JRE : JDK; //the name of the Java installation
             string BTYPE = flags.HasFlag(JavaFlags.Development) ? JAVAC : JAVA; //the name of the relevant Java executable
 
             Java output = new Java()
@@ -245,7 +245,11 @@ namespace C_4
             string exe = Path.Combine(output.home, "bin", BTYPE);
             if (!File.Exists(exe))
             {
-                output.error = $"Failed to locate {BTYPE} in {output.home}. Try re-installing {JTYPE} {output.version}.";
+                output.error = $"Failed to locate {exe}.";
+                if(!string.IsNullOrWhiteSpace(output.version))
+                {
+                    output.error += $" Try re-installing {JNAME} {output.version}.";
+                }
                 output.errtype = 6;
             }
             else
