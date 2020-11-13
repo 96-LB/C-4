@@ -93,6 +93,8 @@ namespace C_4
 
         #endregion
 
+        Config settings = new Config("C-4.config");
+
         public Form1()
         {
 
@@ -163,7 +165,7 @@ namespace C_4
                 return;
             }
 
-            Java javac = Java.SearchJava(Java.JavaFlags.Development, Java.JavaFlags.Development); //loads the current java development version
+            Java javac = settings["java"] != null ? Java.GetJava(settings["java"], Java.JavaFlags.Development) : Java.SearchJava(Java.JavaFlags.Development, Java.JavaFlags.Development); //loads the current java development version
             if (javac.error != null) //if there's an error loading, display and abort
             {
                 MessageBox.Show(javac.error, "Error Locating Compiler!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -226,7 +228,7 @@ namespace C_4
                         return;
                     }
 
-                    Java java = Java.SearchJava(Java.JavaFlags.Default, Java.JavaFlags.Development); //loads the current java development version                                                                             //loads the current java runtime version
+                    Java java = settings["java"] != null ? Java.GetJava(settings["java"], Java.JavaFlags.Default) : Java.SearchJava(Java.JavaFlags.Default, Java.JavaFlags.Development); //loads the current java development version                                                                             //loads the current java runtime version
                     if (java.error != null) //if there's an error loading, display and abort
                     {
                         MessageBox.Show(java.error, "Error Locating Tester!", MessageBoxButtons.OK, MessageBoxIcon.Error);
