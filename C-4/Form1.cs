@@ -796,6 +796,7 @@ dd {
                 button8.Enabled = false;
                 button8.BackColor = Color.FromArgb(102, 102, 0);
                 button8.Cursor = Cursors.No;
+                problems.Clear();
                 backgroundWorker1.RunWorkerAsync();
             }
         }
@@ -831,7 +832,6 @@ dd {
                 }
                 return;
             }
-            problems.Clear();
             foreach (string name in d.Keys)
             {
                 string filename = Path.Combine(PROB_DIR, name);
