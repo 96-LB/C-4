@@ -160,6 +160,7 @@
             // backgroundWorker1
             // 
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
             // backgroundWorker2
             // 
@@ -189,7 +190,7 @@
             this.MinimumSize = new System.Drawing.Size(608, 408);
             this.Name = "Form1";
             this.Padding = new System.Windows.Forms.Padding(4);
-            this.Text = "C-4";
+            this.Text = "6";
             this.MouseCaptureChanged += new System.EventHandler(this.Form1_MouseCaptureChanged);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             this.MouseEnter += new System.EventHandler(this.Form1_MouseOver);

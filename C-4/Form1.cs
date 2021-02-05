@@ -219,6 +219,10 @@ namespace C_4
 
                 if (error != "")
                 {
+                    if (backgroundWorker2_Progress(-1, "ERROR!", e))
+                    {
+                        return;
+                    }
                     MessageBox.Show(error, "Compilation Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
@@ -365,7 +369,7 @@ The contents of this test are hidden.";
             if (!backgroundWorker2.CancellationPending)
             {
                 button1.Enabled = false;
-                button1.BackColor = Color.FromName("DarkGreen");
+                button1.BackColor = Color.FromArgb(6, 98, 2);
                 button1.Cursor = Cursors.No;
                 button1.Text = (string)e.UserState;
                 if (e.ProgressPercentage == 96)
@@ -396,7 +400,7 @@ The contents of this test are hidden.";
             {
                 Form1_Resize(null, null);
                 button1.Enabled = current.Tests != null && current.Tests.Length > 0;
-                button1.BackColor = current.Tests != null && current.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromName("DarkGreen");
+                button1.BackColor = current.Tests != null && current.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromArgb(6, 98, 2);
                 button1.Cursor = current.Tests != null && current.Tests.Length > 0 ? Cursors.Default : Cursors.No;
                 button1.Text = "UPLOAD CODE FILE";
                 if (Directory.Exists(COMP_DIR)) //if the temporary directory exists, delete it
@@ -629,7 +633,7 @@ dd {
             {
                 Text = string.IsNullOrWhiteSpace(problem.Name) ? "C-4" : $"C-4 ({problem.Name})";
                 button1.Enabled = problem.Tests != null && problem.Tests.Length > 0;
-                button1.BackColor = problem.Tests != null && problem.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromName("DarkGreen");
+                button1.BackColor = problem.Tests != null && problem.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromArgb(6, 98, 2);
                 button1.Cursor = problem.Tests != null && problem.Tests.Length > 0 ? Cursors.Default : Cursors.No;
             }
             webBrowser1.Refresh();
@@ -777,30 +781,27 @@ dd {
             Invalidate();
         }
 
-        //TODO: better load button <========================================================================================================================================================================================================================
         List<Problem> problems = new List<Problem>();
         List<Problem> results = new List<Problem>();
         private void LoadProblems()
         {
-            //foreach (Button button in problems.Keys)
-            //{
-            //    button.Dispose();
-            //}
             if (!backgroundWorker1.IsBusy)
             {
-                problems.Clear();
                 highlighted = selected = -1;
                 click = false;
                 Form1_Resize(null, null);
                 current = PROB_DEF;
                 RenderProblem();
                 vScrollBar1.Value = vScrollBar1.Minimum;
+                button8.Enabled = false;
+                button8.BackColor = Color.FromArgb(102, 102, 0);
+                button8.Cursor = Cursors.No;
                 backgroundWorker1.RunWorkerAsync();
             }
         }
 
         HttpClient client = new HttpClient() { BaseAddress = new Uri("https://carver-coding-club-computer.cf") };
-        private async void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             if (Directory.Exists(IMG_DIR))
             {
@@ -809,9 +810,9 @@ dd {
             Dictionary<string, byte[]> d;
             try
             {
-                d = JsonConvert.DeserializeObject<Dictionary<string, byte[]>>(await (await client.PostAsync("problems", null)).Content.ReadAsStringAsync());
+                d = JsonConvert.DeserializeObject<Dictionary<string, byte[]>>(client.PostAsync("problems", null).Result.Content.ReadAsStringAsync().Result);
             }
-            catch (HttpRequestException)
+            catch (AggregateException)
             {
                 MessageBox.Show("A connection could not be established to the remote server. Only previously downloaded files will be available.", "Error Downloading Files!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 foreach (string filename in Directory.EnumerateFiles(PROB_DIR))
@@ -830,6 +831,7 @@ dd {
                 }
                 return;
             }
+            problems.Clear();
             foreach (string name in d.Keys)
             {
                 string filename = Path.Combine(PROB_DIR, name);
@@ -850,7 +852,7 @@ dd {
                     Directory.CreateDirectory(LOAD_DIR);
                     try
                     {
-                        File.WriteAllBytes(loadname, await client.GetByteArrayAsync("problems/" + name));
+                        File.WriteAllBytes(loadname, client.GetByteArrayAsync("problems/" + name).Result);
                     }
                     catch (HttpRequestException)
                     {
@@ -881,6 +883,13 @@ dd {
             }
         }
 
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            button8.Enabled = true;
+            button8.BackColor = Color.FromArgb(204, 204, 0);
+            button8.Cursor = Cursors.Default;
+            button8.Text = "RELOAD PROBLEMS";
+        }
 
         int scrollAmount;
         private void scorll(object sender, MouseEventArgs e)
