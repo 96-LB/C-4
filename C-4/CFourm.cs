@@ -20,7 +20,7 @@ using System.Net.Http;
 
 namespace C_4
 {
-    public partial class Form1 : Form
+    public partial class CFourm : Form
     {
 
         #region Constants
@@ -28,29 +28,29 @@ namespace C_4
         /// <summary>
         /// The compilation and execution timeout
         /// </summary>
-        const int TIMEOUT = 10000;
+        public const int TIMEOUT = 10000;
 
         #region Verdicts
 
         /// <summary>
         /// The verdict string for a correct answer
         /// </summary>
-        const string AC = "Accepted";
+        public const string AC = "Accepted";
 
         /// <summary>
         /// The verdict string for a wrong answer
         /// </summary>
-        const string WA = "Wrong Answer";
+        public const string WA = "Wrong Answer";
 
         /// <summary>
         /// The verdict string for an exceeded time limit
         /// </summary>
-        const string TLE = "Timed Out";
+        public const string TLE = "Timed Out";
 
         /// <summary>
         /// The verdict string for a runtime error
         /// </summary>
-        const string RE = "Error";
+        public const string RE = "Error";
 
         #endregion
 
@@ -58,7 +58,9 @@ namespace C_4
 
         #region Properties
 
-        List<Problem> Buttons { get => submitted ? results : problems; }
+        private List<Problem> Buttons { get => submitted ? results : problems; }
+        
+        private Config Settings { get; } = new Config("C-4.config");
 
         #region Fake Constants
 
@@ -93,12 +95,11 @@ namespace C_4
 
         #endregion
 
-        Config settings = new Config("C-4.config");
-
-        public Form1()
+        public CFourm()
         {
 
             //this code loads assemblies that are embedded into the project
+            //embedding the dll's allows the application to be shipped as a single file
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 string resourceName = new AssemblyName(args.Name).Name + ".dll";
@@ -112,6 +113,7 @@ namespace C_4
                 }
             };
 
+            //sets all the directory constants
             PROB_DIR = Path.Combine(Application.CommonAppDataPath, "PROB");
 
             TEMP_DIR = Path.Combine(Path.GetTempPath(), "C-4");
@@ -127,19 +129,17 @@ namespace C_4
             COMP_DIR = Path.Combine(TEMP_DIR, "COMP");
             LOAD_DIR = Path.Combine(TEMP_DIR, "LOAD");
 
+            //sets properties and events that can't be done in the designer
             DoubleBuffered = true;
-            MouseWheel += scorll;
+            MouseWheel += CFourm_MouseWheel;
 
             InitializeComponent();
 
             webBrowser1.Navigate("about:blank");
 
-            PROB_DEF = new Problem
-            {
-                Text = "No problem loaded"
-            };
-            current = PROB_DEF;
-            RenderProblem();
+            //renders the default problem and loads the problem list
+            current = PROB_DEF = new Problem() { Text = "No problem loaded" };
+            RenderCurrentProblem();
             LoadProblems();
         }
 
@@ -164,7 +164,7 @@ namespace C_4
                 return;
             }
 
-            Java javac = settings["java"] != null ? Java.GetJava(settings["java"], Java.JavaFlags.Development) : Java.SearchJava(Java.JavaFlags.Development, Java.JavaFlags.Development); //loads the current java development version
+            Java javac = Settings["java"] != null ? Java.GetJava(Settings["java"], Java.JavaFlags.Development) : Java.SearchJava(Java.JavaFlags.Development, Java.JavaFlags.Development); //loads the current java development version
             if (javac.error != null) //if there's an error loading, display and abort
             {
                 MessageBox.Show(javac.error, "Error Locating Compiler!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -231,7 +231,7 @@ namespace C_4
                         return;
                     }
 
-                    Java java = settings["java"] != null ? Java.GetJava(settings["java"], Java.JavaFlags.Default) : Java.SearchJava(Java.JavaFlags.Default, Java.JavaFlags.Development); //loads the current java development version                                                                             //loads the current java runtime version
+                    Java java = Settings["java"] != null ? Java.GetJava(Settings["java"], Java.JavaFlags.Default) : Java.SearchJava(Java.JavaFlags.Default, Java.JavaFlags.Development); //loads the current java development version                                                                             //loads the current java runtime version
                     if (java.error != null) //if there's an error loading, display and abort
                     {
                         MessageBox.Show(java.error, "Error Locating Tester!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -276,7 +276,7 @@ namespace C_4
                                     result.Name = $"Executing Test {num}...";
                                     result.Text = "This test has not yet finished executing. Click back later to see the results.";
                                     results.Add(result);
-                                    Invoke((EventHandler)Form1_Resize);
+                                    Invoke((EventHandler)CFourm_Resize);
 
                                     //begin reading output and error
                                     o.BeginOutput();
@@ -383,7 +383,7 @@ The contents of this test are hidden.";
                     results.Add(current);
                     if(render)
                     {
-                        RenderProblem();
+                        RenderCurrentProblem();
                     }
                 }
             }
@@ -402,7 +402,7 @@ The contents of this test are hidden.";
         {
             if (e == null || !e.Cancelled)
             {
-                Form1_Resize(null, null);
+                CFourm_Resize(null, null);
                 button1.Enabled = current.Tests != null && current.Tests.Length > 0;
                 button1.BackColor = current.Tests != null && current.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromArgb(6, 98, 2);
                 button1.Cursor = current.Tests != null && current.Tests.Length > 0 ? Cursors.Default : Cursors.No;
@@ -565,7 +565,7 @@ The contents of this test are hidden.";
             return $"![{name}]({filename})";
         }
 
-        void RenderProblem()
+        void RenderCurrentProblem()
         {
             Problem problem = 0 <= selected && selected < Buttons.Count ? Buttons[selected] : PROB_DEF;
             const string HTML_HEAD = @"
@@ -793,9 +793,9 @@ dd {
             {
                 highlighted = selected = -1;
                 click = false;
-                Form1_Resize(null, null);
+                CFourm_Resize(null, null);
                 current = PROB_DEF;
-                RenderProblem();
+                RenderCurrentProblem();
                 vScrollBar1.Value = vScrollBar1.Minimum;
                 button8.Enabled = false;
                 button8.BackColor = Color.FromArgb(102, 102, 0);
@@ -829,7 +829,7 @@ dd {
                             if (VerifyChecksum(file, Checksum(file, 0, file.Length - 12)) && tryProblem(file, out Problem problem))
                             {
                                 problems.Add(problem);
-                                Invoke((EventHandler)Form1_Resize);
+                                Invoke((EventHandler)CFourm_Resize);
                             }
                         }
                     }
@@ -874,7 +874,7 @@ dd {
                     if (tryProblem(file, out Problem problem))
                     {
                         problems.Add(problem);
-                        Invoke((EventHandler)Form1_Resize);
+                        Invoke((EventHandler)CFourm_Resize);
                     }
                 }
             }
@@ -896,7 +896,7 @@ dd {
         }
 
         int scrollAmount;
-        private void scorll(object sender, MouseEventArgs e)
+        private void CFourm_MouseWheel(object sender, MouseEventArgs e)
         {
             if (box.Contains(e.Location))
             {
@@ -910,7 +910,7 @@ dd {
         int highlighted = -1;
         int selected = -1;
         bool click = false;
-        private void Form1_MouseOver(object sender, EventArgs e)
+        private void CFourm_MouseOver(object sender, EventArgs e)
         {
             if (click)
             {
@@ -935,12 +935,12 @@ dd {
             }
         }
 
-        private void Form1_MouseOver(object sender, MouseEventArgs e)
+        private void CFourm_MouseOver(object sender, MouseEventArgs e)
         {
-            Form1_MouseOver(null, EventArgs.Empty);
+            CFourm_MouseOver(null, EventArgs.Empty);
         }
 
-        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        private void CFourm_MouseDown(object sender, MouseEventArgs e)
         {
             if (highlighted > -1 && box.Contains(e.Location) && new Rectangle(24, 29 + 25 * highlighted - vScrollBar1.Value, 130, 25).Contains(e.Location))
             {
@@ -949,7 +949,7 @@ dd {
             }
         }
 
-        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        private void CFourm_MouseUp(object sender, MouseEventArgs e)
         {
             if (highlighted > -1 && click && box.Contains(e.Location) && new Rectangle(24, 29 + 25 * highlighted - vScrollBar1.Value, 130, 25).Contains(e.Location))
             {
@@ -960,13 +960,13 @@ dd {
                     current = Buttons[selected];
                     backgroundWorker2_Cancel();
                 }
-                RenderProblem();
+                RenderCurrentProblem();
             }
             click = false;
             Invalidate();
         }
 
-        private void Form1_MouseCaptureChanged(object sender, EventArgs e)
+        private void CFourm_MouseCaptureChanged(object sender, EventArgs e)
         {
             highlighted = -1;
             click = false;
@@ -1002,16 +1002,16 @@ dd {
                 submitted = false;
                 selected = Buttons.IndexOf(current);
                 button8.Text = "RELOAD PROBLEMS";
-                Form1_Resize(null, null);
+                CFourm_Resize(null, null);
                 vScrollBar1.Value = Math.Max(vScrollBar1.Minimum, Math.Min(25 * selected, vScrollBar1.Maximum - vScrollBar1.LargeChange + 1));
-                RenderProblem();
+                RenderCurrentProblem();
                 Refresh();
             }
             backgroundWorker2_Cancel();
         }
 
-        const int SCROLL_SPEED = 2;
-        private void Form1_Resize(object sender, EventArgs e)
+        public const int SCROLL_SPEED = 2;
+        private void CFourm_Resize(object sender, EventArgs e)
         {
             vScrollBar1.SmallChange = SystemInformation.MouseWheelScrollLines * SCROLL_SPEED;
             vScrollBar1.LargeChange = 100;

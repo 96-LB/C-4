@@ -1,6 +1,6 @@
 ﻿namespace C_4
 {
-    partial class Form1
+    partial class CFourm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CFourm));
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.button5 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
@@ -191,14 +191,14 @@
             this.Name = "Form1";
             this.Padding = new System.Windows.Forms.Padding(4);
             this.Text = "6";
-            this.MouseCaptureChanged += new System.EventHandler(this.Form1_MouseCaptureChanged);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
-            this.MouseEnter += new System.EventHandler(this.Form1_MouseOver);
-            this.MouseLeave += new System.EventHandler(this.Form1_MouseCaptureChanged);
-            this.MouseHover += new System.EventHandler(this.Form1_MouseOver);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseOver);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
-            this.Resize += new System.EventHandler(this.Form1_Resize);
+            this.MouseCaptureChanged += new System.EventHandler(this.CFourm_MouseCaptureChanged);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CFourm_MouseDown);
+            this.MouseEnter += new System.EventHandler(this.CFourm_MouseOver);
+            this.MouseLeave += new System.EventHandler(this.CFourm_MouseCaptureChanged);
+            this.MouseHover += new System.EventHandler(this.CFourm_MouseOver);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CFourm_MouseOver);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CFourm_MouseUp);
+            this.Resize += new System.EventHandler(this.CFourm_Resize);
             this.ResumeLayout(false);
 
         }
