@@ -157,7 +157,6 @@ namespace C_4
             }
         }
 
-        //TODO: reload current problem even if already on compile screen <==============================================================================================================================
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
             if (backgroundWorker2_Progress(0, "LOADING COMPILER", e))
@@ -374,6 +373,7 @@ The contents of this test are hidden.";
                 button1.Text = (string)e.UserState;
                 if (e.ProgressPercentage == 96)
                 {
+                    bool render = submitted && selected != 0;
                     submitted = true;
                     button8.Text = "PROBLEM LIST";
                     selected = 0;
@@ -381,6 +381,10 @@ The contents of this test are hidden.";
                     click = false;
                     results.Clear();
                     results.Add(current);
+                    if(render)
+                    {
+                        RenderProblem();
+                    }
                 }
             }
         }
