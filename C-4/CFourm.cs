@@ -135,7 +135,7 @@ namespace C_4
 
             InitializeComponent();
 
-            webBrowser1.Navigate("about:blank");
+            web_problem.Navigate("about:blank");
 
             //renders the default problem and loads the problem list
             current = PROB_DEF = new Problem() { Text = "No problem loaded" };
@@ -144,15 +144,15 @@ namespace C_4
         }
 
         Problem current;
-        private void button1_Click(object sender, EventArgs e)
+        private void btn_upload_Click(object sender, EventArgs e)
         {
             //prompt the user with a dialog to upload a script
             if (!backgroundWorker2.IsBusy)
             {
-                FileDialog f = new OpenFileDialog() { Filter = "Java scripts|*.java" };
-                if (f.ShowDialog() == DialogResult.OK)
+                FileDialog dialog = new OpenFileDialog() { Filter = "Java scripts|*.java" };
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    backgroundWorker2.RunWorkerAsync(f.FileName);
+                    backgroundWorker2.RunWorkerAsync(dialog.FileName);
                 }
             }
         }
@@ -367,15 +367,15 @@ The contents of this test are hidden.";
         {
             if (!backgroundWorker2.CancellationPending)
             {
-                button1.Enabled = false;
-                button1.BackColor = Color.FromArgb(6, 98, 2);
-                button1.Cursor = Cursors.No;
-                button1.Text = (string)e.UserState;
+                btn_upload.Enabled = false;
+                btn_upload.BackColor = Color.FromArgb(6, 98, 2);
+                btn_upload.Cursor = Cursors.No;
+                btn_upload.Text = (string)e.UserState;
                 if (e.ProgressPercentage == 96)
                 {
                     bool render = submitted && selected != 0;
                     submitted = true;
-                    button8.Text = "PROBLEM LIST";
+                    btn_reload.Text = "PROBLEM LIST";
                     selected = 0;
                     highlighted = -1;
                     click = false;
@@ -403,10 +403,10 @@ The contents of this test are hidden.";
             if (e == null || !e.Cancelled)
             {
                 CFourm_Resize(null, null);
-                button1.Enabled = current.Tests != null && current.Tests.Length > 0;
-                button1.BackColor = current.Tests != null && current.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromArgb(6, 98, 2);
-                button1.Cursor = current.Tests != null && current.Tests.Length > 0 ? Cursors.Default : Cursors.No;
-                button1.Text = "UPLOAD CODE FILE";
+                btn_upload.Enabled = current.Tests != null && current.Tests.Length > 0;
+                btn_upload.BackColor = current.Tests != null && current.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromArgb(6, 98, 2);
+                btn_upload.Cursor = current.Tests != null && current.Tests.Length > 0 ? Cursors.Default : Cursors.No;
+                btn_upload.Text = "UPLOAD CODE FILE";
                 if (Directory.Exists(COMP_DIR)) //if the temporary directory exists, delete it
                 {
                     Directory.Delete(COMP_DIR, true);
@@ -631,16 +631,16 @@ dd {
             body = sanitizer.Sanitize(Markdown.ToHtml(body, new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSoftlineBreakAsHardlineBreak().DisableHtml().Build()));
 
             navigate = true;
-            webBrowser1.Document.OpenNew(true);
-            webBrowser1.Document.Write(HTML_HEAD + body + HTML_TAIL);
+            web_problem.Document.OpenNew(true);
+            web_problem.Document.Write(HTML_HEAD + body + HTML_TAIL);
             if (!submitted)
             {
                 Text = string.IsNullOrWhiteSpace(problem.Name) ? "C-4" : $"C-4 ({problem.Name})";
-                button1.Enabled = problem.Tests != null && problem.Tests.Length > 0;
-                button1.BackColor = problem.Tests != null && problem.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromArgb(6, 98, 2);
-                button1.Cursor = problem.Tests != null && problem.Tests.Length > 0 ? Cursors.Default : Cursors.No;
+                btn_upload.Enabled = problem.Tests != null && problem.Tests.Length > 0;
+                btn_upload.BackColor = problem.Tests != null && problem.Tests.Length > 0 ? Color.FromArgb(12, 196, 4) : Color.FromArgb(6, 98, 2);
+                btn_upload.Cursor = problem.Tests != null && problem.Tests.Length > 0 ? Cursors.Default : Cursors.No;
             }
-            webBrowser1.Refresh();
+            web_problem.Refresh();
             Invalidate();
         }
 
@@ -654,7 +654,7 @@ dd {
         }
 
         bool navigate = true;
-        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        private void web_problem_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             if (navigate || (e.Url.Scheme == "about" && e.Url.ToString() != "about:blank"))
             {
@@ -683,7 +683,7 @@ dd {
             for (int i = 0; i < Buttons.Count; i++)
             {
                 Problem problem = Buttons[i];
-                Rectangle rect = new Rectangle(24, 29 + 25 * i - vScrollBar1.Value, 130, 25);
+                Rectangle rect = new Rectangle(24, 29 + 25 * i - vsb_scroll.Value, 130, 25);
                 bool clicked = i == highlighted && click && box.Contains(PointToClient(Cursor.Position)) && rect.Contains(PointToClient(Cursor.Position));
 
                 e.Graphics.SetClip(box);
@@ -764,23 +764,23 @@ dd {
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void btn_close_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void btn_maximize_Click(object sender, EventArgs e)
         {
             WindowState = WindowState == FormWindowState.Maximized ? FormWindowState.Normal : FormWindowState.Maximized;
             OnResize(null);
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void btn_minimize_Click(object sender, EventArgs e)
         {
             WindowState = FormWindowState.Minimized;
         }
 
-        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        private void vsb_scroll_Scroll(object sender, ScrollEventArgs e)
         {
             Invalidate();
         }
@@ -796,10 +796,10 @@ dd {
                 CFourm_Resize(null, null);
                 current = PROB_DEF;
                 RenderCurrentProblem();
-                vScrollBar1.Value = vScrollBar1.Minimum;
-                button8.Enabled = false;
-                button8.BackColor = Color.FromArgb(102, 102, 0);
-                button8.Cursor = Cursors.No;
+                vsb_scroll.Value = vsb_scroll.Minimum;
+                btn_reload.Enabled = false;
+                btn_reload.BackColor = Color.FromArgb(102, 102, 0);
+                btn_reload.Cursor = Cursors.No;
                 problems.Clear();
                 backgroundWorker1.RunWorkerAsync();
             }
@@ -889,10 +889,10 @@ dd {
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            button8.Enabled = true;
-            button8.BackColor = Color.FromArgb(204, 204, 0);
-            button8.Cursor = Cursors.Default;
-            button8.Text = "RELOAD PROBLEMS";
+            btn_reload.Enabled = true;
+            btn_reload.BackColor = Color.FromArgb(204, 204, 0);
+            btn_reload.Cursor = Cursors.Default;
+            btn_reload.Text = "RELOAD PROBLEMS";
         }
 
         int scrollAmount;
@@ -901,7 +901,7 @@ dd {
             if (box.Contains(e.Location))
             {
                 scrollAmount += e.Delta;
-                vScrollBar1.Value = Math.Max(vScrollBar1.Minimum, Math.Min(vScrollBar1.Value - (SCROLL_SPEED * SystemInformation.MouseWheelScrollLines * scrollAmount / 120), vScrollBar1.Maximum - vScrollBar1.LargeChange + 1));
+                vsb_scroll.Value = Math.Max(vsb_scroll.Minimum, Math.Min(vsb_scroll.Value - (SCROLL_SPEED * SystemInformation.MouseWheelScrollLines * scrollAmount / 120), vsb_scroll.Maximum - vsb_scroll.LargeChange + 1));
                 scrollAmount %= 120 / SystemInformation.MouseWheelScrollLines / SCROLL_SPEED;
                 Invalidate();
             }
@@ -924,7 +924,7 @@ dd {
                 Invalidate();
                 for (int i = 0; i < Buttons.Count; i++)
                 {
-                    Rectangle rect = new Rectangle(24, 29 + 25 * i - vScrollBar1.Value, 130, 25);
+                    Rectangle rect = new Rectangle(24, 29 + 25 * i - vsb_scroll.Value, 130, 25);
 
                     if (rect.Contains(pointer))
                     {
@@ -942,7 +942,7 @@ dd {
 
         private void CFourm_MouseDown(object sender, MouseEventArgs e)
         {
-            if (highlighted > -1 && box.Contains(e.Location) && new Rectangle(24, 29 + 25 * highlighted - vScrollBar1.Value, 130, 25).Contains(e.Location))
+            if (highlighted > -1 && box.Contains(e.Location) && new Rectangle(24, 29 + 25 * highlighted - vsb_scroll.Value, 130, 25).Contains(e.Location))
             {
                 click = true;
                 Invalidate();
@@ -951,7 +951,7 @@ dd {
 
         private void CFourm_MouseUp(object sender, MouseEventArgs e)
         {
-            if (highlighted > -1 && click && box.Contains(e.Location) && new Rectangle(24, 29 + 25 * highlighted - vScrollBar1.Value, 130, 25).Contains(e.Location))
+            if (highlighted > -1 && click && box.Contains(e.Location) && new Rectangle(24, 29 + 25 * highlighted - vsb_scroll.Value, 130, 25).Contains(e.Location))
             {
                 selected = highlighted;
                 highlighted = -1;
@@ -991,7 +991,7 @@ dd {
         };
         Font btnFont = new Font("Arial Narrow", 9.75f);
 
-        private void button8_Click(object sender, EventArgs e)
+        private void btn_reload_Click(object sender, EventArgs e)
         {
             if (!submitted)
             {
@@ -1001,9 +1001,9 @@ dd {
             {
                 submitted = false;
                 selected = Buttons.IndexOf(current);
-                button8.Text = "RELOAD PROBLEMS";
+                btn_reload.Text = "RELOAD PROBLEMS";
                 CFourm_Resize(null, null);
-                vScrollBar1.Value = Math.Max(vScrollBar1.Minimum, Math.Min(25 * selected, vScrollBar1.Maximum - vScrollBar1.LargeChange + 1));
+                vsb_scroll.Value = Math.Max(vsb_scroll.Minimum, Math.Min(25 * selected, vsb_scroll.Maximum - vsb_scroll.LargeChange + 1));
                 RenderCurrentProblem();
                 Refresh();
             }
@@ -1013,13 +1013,13 @@ dd {
         public const int SCROLL_SPEED = 2;
         private void CFourm_Resize(object sender, EventArgs e)
         {
-            vScrollBar1.SmallChange = SystemInformation.MouseWheelScrollLines * SCROLL_SPEED;
-            vScrollBar1.LargeChange = 100;
-            vScrollBar1.Maximum = Math.Max(0, 25 * Buttons.Count - vScrollBar1.Height) + vScrollBar1.LargeChange - 1;
-            vScrollBar1.Value = Math.Max(vScrollBar1.Minimum, Math.Min(vScrollBar1.Value, vScrollBar1.Maximum - vScrollBar1.LargeChange + 1));
-            vScrollBar1.Enabled = vScrollBar1.Maximum > vScrollBar1.LargeChange - 1;
-            vScrollBar1.Height = ClientSize.Height - 83;
-            box = new Rectangle(4, 29, 150, vScrollBar1.Height);
+            vsb_scroll.SmallChange = SystemInformation.MouseWheelScrollLines * SCROLL_SPEED;
+            vsb_scroll.LargeChange = 100;
+            vsb_scroll.Maximum = Math.Max(0, 25 * Buttons.Count - vsb_scroll.Height) + vsb_scroll.LargeChange - 1;
+            vsb_scroll.Value = Math.Max(vsb_scroll.Minimum, Math.Min(vsb_scroll.Value, vsb_scroll.Maximum - vsb_scroll.LargeChange + 1));
+            vsb_scroll.Enabled = vsb_scroll.Maximum > vsb_scroll.LargeChange - 1;
+            vsb_scroll.Height = ClientSize.Height - 83;
+            box = new Rectangle(4, 29, 150, vsb_scroll.Height);
             Invalidate();
         }
     }

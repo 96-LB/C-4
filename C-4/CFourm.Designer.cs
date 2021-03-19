@@ -29,133 +29,133 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CFourm));
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
-            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+            this.web_problem = new System.Windows.Forms.WebBrowser();
+            this.btn_close = new System.Windows.Forms.Button();
+            this.btn_minimize = new System.Windows.Forms.Button();
+            this.btn_maximize = new System.Windows.Forms.Button();
+            this.btn_upload = new System.Windows.Forms.Button();
+            this.btn_reload = new System.Windows.Forms.Button();
+            this.vsb_scroll = new System.Windows.Forms.VScrollBar();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
-            // webBrowser1
+            // web_problem
             // 
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.web_problem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser1.Location = new System.Drawing.Point(154, 29);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(450, 375);
-            this.webBrowser1.TabIndex = 6;
-            this.webBrowser1.WebBrowserShortcutsEnabled = false;
-            this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
+            this.web_problem.IsWebBrowserContextMenuEnabled = false;
+            this.web_problem.Location = new System.Drawing.Point(154, 29);
+            this.web_problem.MinimumSize = new System.Drawing.Size(20, 20);
+            this.web_problem.Name = "web_problem";
+            this.web_problem.Size = new System.Drawing.Size(450, 375);
+            this.web_problem.TabIndex = 6;
+            this.web_problem.WebBrowserShortcutsEnabled = false;
+            this.web_problem.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.web_problem_Navigating);
             // 
-            // button5
+            // btn_close
             // 
-            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(12)))), ((int)(((byte)(4)))));
-            this.button5.FlatAppearance.BorderColor = System.Drawing.Color.Red;
-            this.button5.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.button5.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button5.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14F);
-            this.button5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.button5.Location = new System.Drawing.Point(579, 2);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(25, 25);
-            this.button5.TabIndex = 2;
-            this.button5.Text = "×";
-            this.button5.UseCompatibleTextRendering = true;
-            this.button5.UseVisualStyleBackColor = false;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.btn_close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_close.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(12)))), ((int)(((byte)(4)))));
+            this.btn_close.FlatAppearance.BorderColor = System.Drawing.Color.Red;
+            this.btn_close.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btn_close.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btn_close.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_close.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14F);
+            this.btn_close.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btn_close.Location = new System.Drawing.Point(579, 2);
+            this.btn_close.Name = "btn_close";
+            this.btn_close.Size = new System.Drawing.Size(25, 25);
+            this.btn_close.TabIndex = 2;
+            this.btn_close.Text = "×";
+            this.btn_close.UseCompatibleTextRendering = true;
+            this.btn_close.UseVisualStyleBackColor = false;
+            this.btn_close.Click += new System.EventHandler(this.btn_close_Click);
             // 
-            // button7
+            // btn_minimize
             // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(0)))));
-            this.button7.FlatAppearance.BorderColor = System.Drawing.Color.Yellow;
-            this.button7.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(0)))));
-            this.button7.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(0)))));
-            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button7.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14F);
-            this.button7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
-            this.button7.Location = new System.Drawing.Point(521, 2);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(25, 25);
-            this.button7.TabIndex = 0;
-            this.button7.Text = "−";
-            this.button7.UseCompatibleTextRendering = true;
-            this.button7.UseVisualStyleBackColor = false;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.btn_minimize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_minimize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(0)))));
+            this.btn_minimize.FlatAppearance.BorderColor = System.Drawing.Color.Yellow;
+            this.btn_minimize.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(0)))));
+            this.btn_minimize.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(0)))));
+            this.btn_minimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_minimize.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14F);
+            this.btn_minimize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
+            this.btn_minimize.Location = new System.Drawing.Point(521, 2);
+            this.btn_minimize.Name = "btn_minimize";
+            this.btn_minimize.Size = new System.Drawing.Size(25, 25);
+            this.btn_minimize.TabIndex = 0;
+            this.btn_minimize.Text = "−";
+            this.btn_minimize.UseCompatibleTextRendering = true;
+            this.btn_minimize.UseVisualStyleBackColor = false;
+            this.btn_minimize.Click += new System.EventHandler(this.btn_minimize_Click);
             // 
-            // button6
+            // btn_maximize
             // 
-            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(12)))), ((int)(((byte)(196)))), ((int)(((byte)(4)))));
-            this.button6.FlatAppearance.BorderColor = System.Drawing.Color.Lime;
-            this.button6.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGreen;
-            this.button6.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(164)))), ((int)(((byte)(0)))));
-            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button6.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14F);
-            this.button6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
-            this.button6.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.button6.Location = new System.Drawing.Point(550, 2);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(25, 25);
-            this.button6.TabIndex = 1;
-            this.button6.Text = "+";
-            this.button6.UseCompatibleTextRendering = true;
-            this.button6.UseVisualStyleBackColor = false;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.btn_maximize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_maximize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(12)))), ((int)(((byte)(196)))), ((int)(((byte)(4)))));
+            this.btn_maximize.FlatAppearance.BorderColor = System.Drawing.Color.Lime;
+            this.btn_maximize.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGreen;
+            this.btn_maximize.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(164)))), ((int)(((byte)(0)))));
+            this.btn_maximize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_maximize.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14F);
+            this.btn_maximize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
+            this.btn_maximize.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btn_maximize.Location = new System.Drawing.Point(550, 2);
+            this.btn_maximize.Name = "btn_maximize";
+            this.btn_maximize.Size = new System.Drawing.Size(25, 25);
+            this.btn_maximize.TabIndex = 1;
+            this.btn_maximize.Text = "+";
+            this.btn_maximize.UseCompatibleTextRendering = true;
+            this.btn_maximize.UseVisualStyleBackColor = false;
+            this.btn_maximize.Click += new System.EventHandler(this.btn_maximize_Click);
             // 
-            // button1
+            // btn_upload
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(12)))), ((int)(((byte)(196)))), ((int)(((byte)(4)))));
-            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.Lime;
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGreen;
-            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(164)))), ((int)(((byte)(0)))));
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold);
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
-            this.button1.Location = new System.Drawing.Point(4, 379);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(150, 25);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "UPLOAD CODE FILE";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btn_upload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btn_upload.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(12)))), ((int)(((byte)(196)))), ((int)(((byte)(4)))));
+            this.btn_upload.FlatAppearance.BorderColor = System.Drawing.Color.Lime;
+            this.btn_upload.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGreen;
+            this.btn_upload.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(164)))), ((int)(((byte)(0)))));
+            this.btn_upload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_upload.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold);
+            this.btn_upload.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
+            this.btn_upload.Location = new System.Drawing.Point(4, 379);
+            this.btn_upload.Name = "btn_upload";
+            this.btn_upload.Size = new System.Drawing.Size(150, 25);
+            this.btn_upload.TabIndex = 5;
+            this.btn_upload.Text = "UPLOAD CODE FILE";
+            this.btn_upload.UseVisualStyleBackColor = false;
+            this.btn_upload.Click += new System.EventHandler(this.btn_upload_Click);
             // 
-            // button8
+            // btn_reload
             // 
-            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(0)))));
-            this.button8.FlatAppearance.BorderColor = System.Drawing.Color.Yellow;
-            this.button8.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(0)))));
-            this.button8.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(0)))));
-            this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button8.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold);
-            this.button8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
-            this.button8.Location = new System.Drawing.Point(4, 354);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(150, 25);
-            this.button8.TabIndex = 4;
-            this.button8.Text = "RELOAD PROBLEMS";
-            this.button8.UseVisualStyleBackColor = false;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.btn_reload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btn_reload.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(0)))));
+            this.btn_reload.FlatAppearance.BorderColor = System.Drawing.Color.Yellow;
+            this.btn_reload.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(0)))));
+            this.btn_reload.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(0)))));
+            this.btn_reload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_reload.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold);
+            this.btn_reload.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(0)))));
+            this.btn_reload.Location = new System.Drawing.Point(4, 354);
+            this.btn_reload.Name = "btn_reload";
+            this.btn_reload.Size = new System.Drawing.Size(150, 25);
+            this.btn_reload.TabIndex = 4;
+            this.btn_reload.Text = "RELOAD PROBLEMS";
+            this.btn_reload.UseVisualStyleBackColor = false;
+            this.btn_reload.Click += new System.EventHandler(this.btn_reload_Click);
             // 
-            // vScrollBar1
+            // vsb_scroll
             // 
-            this.vScrollBar1.Location = new System.Drawing.Point(4, 29);
-            this.vScrollBar1.Name = "vScrollBar1";
-            this.vScrollBar1.Size = new System.Drawing.Size(20, 325);
-            this.vScrollBar1.SmallChange = 3;
-            this.vScrollBar1.TabIndex = 0;
-            this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar1_Scroll);
+            this.vsb_scroll.Location = new System.Drawing.Point(4, 29);
+            this.vsb_scroll.Name = "vsb_scroll";
+            this.vsb_scroll.Size = new System.Drawing.Size(20, 325);
+            this.vsb_scroll.SmallChange = 3;
+            this.vsb_scroll.TabIndex = 0;
+            this.vsb_scroll.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vsb_scroll_Scroll);
             // 
             // backgroundWorker1
             // 
@@ -170,25 +170,25 @@
             this.backgroundWorker2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker2_ProgressChanged);
             this.backgroundWorker2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker2_RunWorkerCompleted);
             // 
-            // Form1
+            // CFourm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
             this.ClientSize = new System.Drawing.Size(608, 408);
-            this.Controls.Add(this.vScrollBar1);
-            this.Controls.Add(this.button8);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button7);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.webBrowser1);
+            this.Controls.Add(this.vsb_scroll);
+            this.Controls.Add(this.btn_reload);
+            this.Controls.Add(this.btn_upload);
+            this.Controls.Add(this.btn_maximize);
+            this.Controls.Add(this.btn_minimize);
+            this.Controls.Add(this.btn_close);
+            this.Controls.Add(this.web_problem);
             this.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(12)))), ((int)(((byte)(196)))), ((int)(((byte)(64)))));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(608, 408);
-            this.Name = "Form1";
+            this.Name = "CFourm";
             this.Padding = new System.Windows.Forms.Padding(4);
             this.Text = "6";
             this.MouseCaptureChanged += new System.EventHandler(this.CFourm_MouseCaptureChanged);
@@ -204,13 +204,13 @@
         }
 
         #endregion
-        private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.WebBrowser web_problem;
+        private System.Windows.Forms.Button btn_close;
+        private System.Windows.Forms.Button btn_minimize;
+        private System.Windows.Forms.Button btn_maximize;
+        private System.Windows.Forms.Button btn_upload;
+        private System.Windows.Forms.Button btn_reload;
+        private System.Windows.Forms.VScrollBar vsb_scroll;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
     }
