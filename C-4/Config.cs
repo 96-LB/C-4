@@ -29,7 +29,7 @@ namespace C_4
         /// </summary>
         /// <param name="key">The configuration setting to query</param>
         /// <returns>The value of the specified configuration setting, or null if it is unset</returns>
-        public string this[string key] { get => settings.ContainsKey(key) ? settings[key] : null; }
+        public string this[string key] { get => IsSet(key) ? settings[key] : null; }
 
         #endregion
 
@@ -54,6 +54,17 @@ namespace C_4
                 }
             }
         }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Checks whether the given configuration setting has been provided a value
+        /// </summary>
+        /// <param name="key">The configuration setting to check</param>
+        /// <returns>Whether the given setting has been provided a value</returns>
+        public bool IsSet(string key) => settings.ContainsKey(key);
 
         #endregion
 

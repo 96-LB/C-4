@@ -147,24 +147,28 @@ namespace C_4
         private void btn_upload_Click(object sender, EventArgs e)
         {
             //prompt the user with a dialog to upload a script
-            if (!backgroundWorker2.IsBusy)
+            if (!bgw_upload.IsBusy)
             {
                 FileDialog dialog = new OpenFileDialog() { Filter = "Java scripts|*.java" };
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    backgroundWorker2.RunWorkerAsync(dialog.FileName);
+                    bgw_upload.RunWorkerAsync(dialog.FileName);
                 }
             }
         }
 
-        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        const int BGW_PINGS = 10; //how many times the program should pause and check for cancellation
+        private void bgw_upload_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (backgroundWorker2_Progress(0, "LOADING COMPILER", e))
+            if (bgw_upload_Progress(0, "LOADING COMPILER", e))
             {
-                return;
+                return; //aborts on cancellation
             }
 
-            Java javac = Settings["java"] != null ? Java.GetJava(Settings["java"], Java.JavaFlags.Development) : Java.SearchJava(Java.JavaFlags.Development, Java.JavaFlags.Development); //loads the current java development version
+            Java javac = Settings.IsSet("java") ? 
+                Java.GetJava(Settings["java"], Java.JavaFlags.Development) : 
+                Java.SearchJava(Java.JavaFlags.Development, locked: Java.JavaFlags.Development); //loads the current java development version
+
             if (javac.error != null) //if there's an error loading, display and abort
             {
                 MessageBox.Show(javac.error, "Error Locating Compiler!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -182,7 +186,7 @@ namespace C_4
                     RedirectStandardError = true
                 };
 
-                string error = "";
+                string error = ""; //the error string to be set if judging fails
                 try
                 {
                     //read the error output of the compilaton
@@ -190,18 +194,18 @@ namespace C_4
                     {
                         //start error reading
                         o.BeginError();
-                        for (int i = 0; i < 9; i++)
+                        for (int i = 0; i < BGW_PINGS - 1; i++)
                         {
-                            if (backgroundWorker2_Progress(1, "COMPILING", e))
+                            if (bgw_upload_Progress(1, "COMPILING", e))
                             {
-                                return;
+                                return; //aborts on cancellation
                             }
-                            if (o.Wait(TIMEOUT / 10))
+                            if (o.Wait(TIMEOUT / BGW_PINGS))
                             {
-                                break;
+                                break; //breaks out of loop if the process terminates
                             }
                         }
-                        if (o.Kill(TIMEOUT / 10)) //if compilation lasts too long, end it and throw an error
+                        if (o.Kill(TIMEOUT / BGW_PINGS)) //if compilation lasts too long, end it and throw an error
                         {
                             error = o.Error;
                         }
@@ -211,27 +215,30 @@ namespace C_4
                         }
                     }
                 }
-                catch (Win32Exception) //if the process fails to run, throw an error and abort
+                catch (Win32Exception) //if the process fails to run, throw an error to set up an abortions
                 {
                     error = "Something went wrong while trying to compile your script. Try re-installing your Java Development Kit.";
                 }
 
-                if (error != "")
+                if (error != "") //if the error string is set, notify the user and abort
                 {
-                    if (backgroundWorker2_Progress(-1, "ERROR!", e))
+                    if (bgw_upload_Progress(-1, "ERROR!", e))
                     {
-                        return;
+                        return; //aborts on cancellation
                     }
                     MessageBox.Show(error, "Compilation Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    if (backgroundWorker2_Progress(2, "LOADING TESTER", e))
+                    if (bgw_upload_Progress(2, "LOADING TESTER", e))
                     {
-                        return;
+                        return; //aborts on cancellation
                     }
 
-                    Java java = Settings["java"] != null ? Java.GetJava(Settings["java"], Java.JavaFlags.Default) : Java.SearchJava(Java.JavaFlags.Default, Java.JavaFlags.Development); //loads the current java development version                                                                             //loads the current java runtime version
+                    Java java = Settings.IsSet("java") ?
+                        Java.GetJava(Settings["java"], Java.JavaFlags.Default) :
+                        Java.SearchJava(Java.JavaFlags.Default, Java.JavaFlags.Development); //loads the current java development version                                                                             //loads the current java runtime version
+                    
                     if (java.error != null) //if there's an error loading, display and abort
                     {
                         MessageBox.Show(java.error, "Error Locating Tester!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -249,16 +256,16 @@ namespace C_4
                             RedirectStandardInput = true
                         };
 
-                        if (backgroundWorker2_Progress(96, "RUNNING TESTS", e))
+                        if (bgw_upload_Progress(96, "RUNNING TESTS", e))
                         {
-                            return;
+                            return; //aborts on cancellation
                         }
 
                         try
                         {
                             int num = 0; //the test number
 
-                            foreach (Problem.Test test in current?.Tests ?? new Problem.Test[0])
+                            foreach (Problem.Test test in current?.Tests ?? Enumerable.Empty<Problem.Test>())
                             {
                                 //read input, output, and test number
                                 string input = test.input;
@@ -268,13 +275,17 @@ namespace C_4
                                 //read the output of the program
                                 using (OutputReader o = new OutputReader(Process.Start(ps)))
                                 {
-                                    if (backgroundWorker2_Progress(100, $"RUNNING TEST #{num}", e))
+                                    if (bgw_upload_Progress(100, $"RUNNING TEST #{num}", e))
                                     {
-                                        return;
+                                        return; //aborts on cancellation
                                     }
-                                    Problem result = new Problem();
-                                    result.Name = $"Executing Test {num}...";
-                                    result.Text = "This test has not yet finished executing. Click back later to see the results.";
+                                    
+                                    //set up an in-progress result
+                                    Problem result = new Problem
+                                    {
+                                        Name = $"Executing Test {num}...",
+                                        Text = "This test has not yet finished executing. Click back later to see the results."
+                                    }; //a display of the result of the current test case
                                     results.Add(result);
                                     Invoke((EventHandler)CFourm_Resize);
 
@@ -286,23 +297,23 @@ namespace C_4
                                     o.Process.StandardInput.Write(input);
                                     o.Process.StandardInput.Close();
 
-                                    for (int i = 0; i < 9; i++)
+                                    for (int i = 0; i < BGW_PINGS - 1; i++)
                                     {
-                                        if (backgroundWorker2_Progress(100, $"RUNNING TEST #{num}", e))
+                                        if (bgw_upload_Progress(100, $"RUNNING TEST #{num}", e))
                                         {
-                                            return;
+                                            return; //aborts on cancellation
                                         }
-                                        if (o.Wait(TIMEOUT / 10))
+                                        if (o.Wait(TIMEOUT / BGW_PINGS))
                                         {
-                                            break;
+                                            break; //breaks out of loop if the process terminates
                                         }
                                     }
 
                                     //build the results string based on the result
-                                    string verdict;
-                                    if (o.Kill(TIMEOUT / 10)) //if the program doesn't terminate naturally, it exceeded the time limit
+                                    string verdict; //the verdict of the test
+                                    if (o.Kill(TIMEOUT / BGW_PINGS)) //if the program doesn't terminate naturally, it exceeded the time limit
                                     {
-                                        if (backgroundWorker2_Progress(100, $"RUNNING TEST #{num}", e))
+                                        if (bgw_upload_Progress(100, $"RUNNING TEST #{num}", e))
                                         {
                                             return;
                                         }
@@ -315,12 +326,16 @@ namespace C_4
                                         verdict = TLE;
                                     }
                                     result.Name = $"Test {num}: {verdict}";
-                                    result.Text = $@"Your program {(verdict == TLE ? "was terminated after" : "completed in")} **{o.Time.TotalSeconds:F3}** seconds and exited with code **{o.ExitCode}**.
+                                    
+                                    result.Text = //multiline string
+$@"Your program {(verdict == TLE ? "was terminated after" : "completed in")} **{o.Time.TotalSeconds:F3}** seconds and exited with code **{o.ExitCode}**.
 The received verdict was **{verdict}**.
 ***";
-                                    if (test.visible)
+
+                                    if (test.visible) //if the test case is public, show more detailed information
                                     {
-                                        result.Text += $@"
+                                        result.Text += //multiline string
+$@"
 ### TEST CASE 
 {Codify(input)}
 ***
@@ -332,16 +347,18 @@ The received verdict was **{verdict}**.
 {(o.Error.Length > 0 ? $@"***
 ### ERROR
 {Codify(o.Error)}" : "")}";
+
                                     }
                                     else
                                     {
-                                        result.Text += $@"
+                                        result.Text += //multiline string
+$@"
 The contents of this test are hidden.";
                                     }
                                 }
                             }
                         }
-                        catch (Win32Exception)
+                        catch (Win32Exception) //if the process fails to run, notify the user and abort
                         {
                             MessageBox.Show("Something went wrong while trying to run your script. Try re-installing your Java Runtime Environment.", "Error Running Tester!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
@@ -350,22 +367,22 @@ The contents of this test are hidden.";
             }
         }
 
-        private bool backgroundWorker2_Progress(int progress, string state, DoWorkEventArgs e)
+        private bool bgw_upload_Progress(int progress, string state, DoWorkEventArgs e)
         {
-            if (backgroundWorker2.CancellationPending)
+            if (bgw_upload.CancellationPending)
             {
                 e.Cancel = true;
             }
             else
             {
-                backgroundWorker2.ReportProgress(progress, state);
+                bgw_upload.ReportProgress(progress, state);
             }
             return e.Cancel;
         }
 
-        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void bgw_upload_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (!backgroundWorker2.CancellationPending)
+            if (!bgw_upload.CancellationPending)
             {
                 btn_upload.Enabled = false;
                 btn_upload.BackColor = Color.FromArgb(6, 98, 2);
@@ -389,16 +406,16 @@ The contents of this test are hidden.";
             }
         }
 
-        private void backgroundWorker2_Cancel()
+        private void bgw_upload_Cancel()
         {
-            if (backgroundWorker2.IsBusy)
+            if (bgw_upload.IsBusy)
             {
-                backgroundWorker2.CancelAsync();
-                backgroundWorker2_RunWorkerCompleted(null, null);
+                bgw_upload.CancelAsync();
+                bgw_upload_RunWorkerCompleted(null, null);
             }
         }
 
-        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void bgw_upload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e == null || !e.Cancelled)
             {
@@ -789,7 +806,7 @@ dd {
         List<Problem> results = new List<Problem>();
         private void LoadProblems()
         {
-            if (!backgroundWorker1.IsBusy)
+            if (!bgw_reload.IsBusy)
             {
                 highlighted = selected = -1;
                 click = false;
@@ -801,12 +818,12 @@ dd {
                 btn_reload.BackColor = Color.FromArgb(102, 102, 0);
                 btn_reload.Cursor = Cursors.No;
                 problems.Clear();
-                backgroundWorker1.RunWorkerAsync();
+                bgw_reload.RunWorkerAsync();
             }
         }
 
         HttpClient client = new HttpClient() { BaseAddress = new Uri("https://carver-coding-club-computer.cf") };
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void bgw_reload_DoWork(object sender, DoWorkEventArgs e)
         {
             if (Directory.Exists(IMG_DIR))
             {
@@ -887,7 +904,7 @@ dd {
             }
         }
 
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void bgw_reload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             btn_reload.Enabled = true;
             btn_reload.BackColor = Color.FromArgb(204, 204, 0);
@@ -958,7 +975,7 @@ dd {
                 if (!submitted)
                 {
                     current = Buttons[selected];
-                    backgroundWorker2_Cancel();
+                    bgw_upload_Cancel();
                 }
                 RenderCurrentProblem();
             }
@@ -974,7 +991,7 @@ dd {
         }
 
         Rectangle box;
-        Dictionary<string, Brush> brushes = new Dictionary<string, Brush>
+        readonly Dictionary<string, Brush> brushes = new Dictionary<string, Brush>
         {
             {"text", new SolidBrush(Color.Black) },
             {"box",  new SolidBrush(Color.FromArgb(228, 228, 228))},
@@ -985,11 +1002,11 @@ dd {
             {"select", new SolidBrush(Color.FromArgb(196, 255, 196)) },
             {"selectText", new SolidBrush(Color.FromArgb(76, 196, 76)) }
         };
-        Dictionary<string, Pen> pens = new Dictionary<string, Pen>
+        readonly Dictionary<string, Pen> pens = new Dictionary<string, Pen>
         {
             {"hover", new Pen(Color.FromArgb(12, 64, 196)) },
         };
-        Font btnFont = new Font("Arial Narrow", 9.75f);
+        readonly Font btnFont = new Font("Arial Narrow", 9.75f);
 
         private void btn_reload_Click(object sender, EventArgs e)
         {
@@ -1007,7 +1024,7 @@ dd {
                 RenderCurrentProblem();
                 Refresh();
             }
-            backgroundWorker2_Cancel();
+            bgw_upload_Cancel();
         }
 
         public const int SCROLL_SPEED = 2;

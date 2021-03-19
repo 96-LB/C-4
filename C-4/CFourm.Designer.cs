@@ -36,8 +36,8 @@
             this.btn_upload = new System.Windows.Forms.Button();
             this.btn_reload = new System.Windows.Forms.Button();
             this.vsb_scroll = new System.Windows.Forms.VScrollBar();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.bgw_reload = new System.ComponentModel.BackgroundWorker();
+            this.bgw_upload = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // web_problem
@@ -159,16 +159,16 @@
             // 
             // backgroundWorker1
             // 
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            this.bgw_reload.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgw_reload_DoWork);
+            this.bgw_reload.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgw_reload_RunWorkerCompleted);
             // 
-            // backgroundWorker2
+            // bgw_upload
             // 
-            this.backgroundWorker2.WorkerReportsProgress = true;
-            this.backgroundWorker2.WorkerSupportsCancellation = true;
-            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
-            this.backgroundWorker2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker2_ProgressChanged);
-            this.backgroundWorker2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker2_RunWorkerCompleted);
+            this.bgw_upload.WorkerReportsProgress = true;
+            this.bgw_upload.WorkerSupportsCancellation = true;
+            this.bgw_upload.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgw_upload_DoWork);
+            this.bgw_upload.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgw_upload_ProgressChanged);
+            this.bgw_upload.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgw_upload_RunWorkerCompleted);
             // 
             // CFourm
             // 
@@ -211,8 +211,8 @@
         private System.Windows.Forms.Button btn_upload;
         private System.Windows.Forms.Button btn_reload;
         private System.Windows.Forms.VScrollBar vsb_scroll;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private System.ComponentModel.BackgroundWorker backgroundWorker2;
+        private System.ComponentModel.BackgroundWorker bgw_reload;
+        private System.ComponentModel.BackgroundWorker bgw_upload;
     }
 }
 
